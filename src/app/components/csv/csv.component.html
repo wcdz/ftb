@@ -1,0 +1,66 @@
+<div class="container mt-4">
+  <h2>Movimientos bancarios</h2>
+  <div class="mb-3">
+    <label for="csvInput" class="form-label">Seleccione su archivo CSV</label>
+    <input
+      type="file"
+      accept=".csv"
+      class="form-control"
+      id="csvInput"
+      (change)="onFileSelected($event)"
+    />
+  </div>
+  <div class="d-inline">
+    <button
+      type="button"
+      class="btn btn-primary"
+      [disabled]="!selectedFile"
+      (click)="onSubmit()"
+    >
+      Procesar
+    </button>
+    <button type="button" class="btn btn-primary ms-2" (click)="onReset()">
+      Resetear
+    </button>
+  </div>
+
+  <div class="row justify-content-center mt-4">
+    <div class="col-md-8">
+      <table
+        *ngIf="movimientosData && movimientosData.length > 0"
+        class="table"
+      >
+        <thead>
+          <tr>
+            <th>Fecha</th>
+            <th>Descripción</th>
+            <th>Moneda</th>
+            <th>Monto</th>
+            <th>Código Único</th>
+            <th>Acción</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let movimiento of movimientosData">
+            <td>{{ movimiento.fecha }}</td>
+            <td>{{ movimiento.descripcion }}</td>
+            <td>{{ movimiento.moneda }}</td>
+            <td>{{ movimiento.monto }}</td>
+            <td>{{ movimiento.codigo_unico }}</td>
+            <td>
+              <button type="button" class="btn btn-warning btn-sm">
+                <i class="fa-solid fa-dollar-sign"></i>
+              </button>
+              <button type="button" class="btn btn-primary btn-sm ms-2">
+                <i class="fa fa-pencil"></i>
+              </button>
+              <button type="button" class="btn btn-danger btn-sm ms-2">
+                <i class="fa fa-trash"></i>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
