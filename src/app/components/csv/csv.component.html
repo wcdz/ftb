@@ -44,17 +44,33 @@
           <tr *ngFor="let movimiento of movimientosData">
             <td>{{ movimiento.fecha }}</td>
             <td>{{ movimiento.descripcion }}</td>
-            <td>{{ movimiento.moneda }}</td>
-            <td>{{ movimiento.monto }}</td>
+            <td *ngIf="movimiento.moneda !== 'USD'">{{ movimiento.moneda }}</td>
+            <td *ngIf="movimiento.moneda !== 'USD'">{{ movimiento.monto }}</td>
+            <td *ngIf="movimiento.moneda === 'USD'">
+              {{ movimiento.moneda_cambio }}
+            </td>
+            <td *ngIf="movimiento.moneda === 'USD'">
+              {{ movimiento.valor_cambio }}
+            </td>
+
             <td>{{ movimiento.codigo_unico }}</td>
             <td>
-              <button type="button" class="btn btn-warning btn-sm">
+              <button
+                [disabled]="movimiento.moneda === 'PEN'"
+                type="button"
+                class="btn btn-warning btn-sm"
+                (click)="showAlert(movimiento)"
+              >
                 <i class="fa-solid fa-dollar-sign"></i>
               </button>
               <button type="button" class="btn btn-primary btn-sm ms-2">
                 <i class="fa fa-pencil"></i>
               </button>
-              <button type="button" class="btn btn-danger btn-sm ms-2">
+              <button
+                type="button"
+                class="btn btn-danger btn-sm ms-2"
+                (click)="deleteMovimiento(movimiento)"
+              >
                 <i class="fa fa-trash"></i>
               </button>
             </td>
