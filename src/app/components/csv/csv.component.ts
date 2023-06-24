@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, TemplateRef } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
 @Component({
@@ -11,9 +11,14 @@ export class CsvComponent implements OnInit {
   selectedFile: File | undefined;
   cambioData: any[] = [];
   movimiento: any; // Agrega esta línea para declarar la propiedad movimiento
+  editingIndex: number | null = null;
+  editedDescripcion: string = '';
+  editedMonto: number | null = null;
+
 
   constructor(
-    private http: HttpClient) { }
+    private http: HttpClient,
+  ) { }
 
   ngOnInit(): void {
     this.getMovimientos();
@@ -65,9 +70,12 @@ export class CsvComponent implements OnInit {
           const movimiento: any = {};
           for (let j = 0; j < headers.length; j++) {
             const key = headers[j].trim();
-            const value = rowData[j].trim().replace(/\r$/, ''); // Eliminar el carácter \r al final del valor
+            const value = rowData[j].trim().replace(/\r$/, '');
             movimiento[key] = value;
           }
+
+          // Convertir monto a dos decimales
+          movimiento.monto = parseFloat(movimiento.monto).toFixed(2);
 
           // Transformación para movimientos en soles
           if (movimiento.moneda === 'USD') {
@@ -85,6 +93,7 @@ export class CsvComponent implements OnInit {
 
           this.movimientosData.push(movimiento);
         }
+
 
         const jsonData = JSON.stringify(this.movimientosData);
         localStorage.setItem('movimientos.json', jsonData);
@@ -112,6 +121,7 @@ export class CsvComponent implements OnInit {
       alert(alertMessage);
     }
   }
+
   deleteMovimiento(movimiento: any) {
     const confirmacion = confirm('¿Estás seguro de que deseas eliminar este movimiento?');
     if (confirmacion) {
@@ -122,6 +132,40 @@ export class CsvComponent implements OnInit {
     }
   }
 
+  startEditing(index: number) {
+    const movimiento = this.movimientosData[index];
+    this.editingIndex = index;
+    this.editedDescripcion = movimiento.descripcion;
+    this.editedMonto = movimiento.moneda !== 'USD' ? parseFloat(movimiento.monto) : parseFloat(movimiento.valor_cambio);
+    console.log(this.editedDescripcion, this.editedMonto);
+
+  }
 
 
+  saveChanges() {
+    if (this.editingIndex !== null) {
+      const movimiento = this.movimientosData[this.editingIndex];
+      movimiento.descripcion = this.editedDescripcion;
+
+      if (this.editedMonto !== null) {
+        if (movimiento.moneda === 'USD') {
+          movimiento.valor_cambio = this.editedMonto;
+          movimiento.monto = (this.editedMonto / movimiento.cambio.venta).toFixed(2).toString();
+        } else {
+          movimiento.monto = this.editedMonto.toFixed(2).toString();
+        }
+      }
+
+      if (confirm('¿Deseas guardar los cambios?')) {
+        this.cancelEditing();
+      }
+    }
+  }
+
+
+  cancelEditing() {
+    this.editingIndex = null;
+    this.editedDescripcion = '';
+    this.editedMonto = null;
+  }
 }
