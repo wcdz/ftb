@@ -52,7 +52,6 @@
             <td *ngIf="movimiento.moneda === 'USD'">
               {{ movimiento.valor_cambio }}
             </td>
-
             <td>{{ movimiento.codigo_unico }}</td>
             <td>
               <button
@@ -63,7 +62,6 @@
               >
                 <i class="fa-solid fa-dollar-sign"></i>
               </button>
-
               <button
                 type="button"
                 class="btn btn-primary btn-sm ms-2"
@@ -71,8 +69,11 @@
               >
                 <i class="fa fa-pencil"></i>
               </button>
-
-              <button type="button" class="btn btn-danger btn-sm ms-2">
+              <button
+                type="button"
+                class="btn btn-danger btn-sm ms-2"
+                (click)="deleteMovimiento(movimiento)"
+              >
                 <i class="fa fa-trash"></i>
               </button>
             </td>
@@ -92,7 +93,6 @@
                       [(ngModel)]="editedDescripcion"
                     />
                   </div>
-
                   <div class="form-group col-md-6">
                     <label for="editedMonto">Monto:</label>
                     <input
@@ -106,7 +106,6 @@
                     />
                   </div>
                 </div>
-
                 <button
                   type="button"
                   class="btn btn-primary btn-sm ms-2 mt-2"
